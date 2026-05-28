@@ -1,0 +1,14 @@
+streamlit
+pandas
+numpy
+plotly
+scikit-learn
+openai
+python-dotenv
+matplotlib
+seaborn
+google-api-python-client
+langdetect
+vaderSentiment
+umap-learn
+hdbscan
