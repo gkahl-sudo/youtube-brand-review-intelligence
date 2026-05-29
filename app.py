@@ -86,7 +86,7 @@ if plots_path.exists():
 
     if image_files:
 
-        st.subheader("Video Stats & KPIs (static)")
+        st.subheader("Video Stats & KPIs (Static)")
 
         cols = st.columns(2)
 
@@ -113,7 +113,7 @@ if plots_path.exists():
 
     if html_files:
 
-        st.subheader("Comment Visualizations (interactive)")
+        st.subheader("Comment Visualizations (Interactive)")
 
         # =========================
         # MANUAL DISPLAY ORDER
