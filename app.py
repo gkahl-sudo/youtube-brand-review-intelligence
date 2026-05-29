@@ -1,5 +1,5 @@
 import streamlit as st
-
+import streamlit.components.v1 as components
 from pathlib import Path
 
 from src.rag import ask_rag
@@ -10,11 +10,11 @@ from src.rag import ask_rag
 # =========================
 
 st.set_page_config(
-    page_title="AI Customer Insight Platform",
+    page_title="AI Brand / Customer Review Insight Platform",
     layout="wide"
 )
 
-st.title("AI Customer Insight Platform")
+st.title("AI Brand / Customer Review Insight Platform")
 
 # =========================
 # BRAND MAPPING
@@ -59,7 +59,7 @@ st.info(
 st.divider()
 
 # =========================
-# DISPLAY PLOTS
+# DASHBOARD
 # =========================
 
 st.header("Analytics Dashboard")
@@ -76,18 +76,65 @@ if plots_path.exists():
         + list(plots_path.glob("*.jpeg"))
     )
 
-    for image_path in image_files:
+    html_files = sorted(
+        list(plots_path.glob("*.html"))
+    )
 
-        st.image(
-            str(image_path),
-            caption=image_path.stem,
-            use_container_width=True
-        )
+    # =========================
+    # STATIC IMAGE GRID
+    # =========================
+
+    if image_files:
+
+        st.subheader("Static Visualizations")
+
+        cols = st.columns(2)
+
+        for idx, image_path in enumerate(image_files):
+
+            with cols[idx % 2]:
+
+                with st.container(border=True):
+
+                    st.image(
+                        str(image_path),
+                        use_container_width=True
+                    )
+
+                    st.caption(
+                        image_path.stem
+                        .replace("_", " ")
+                        .title()
+                    )
+
+    # =========================
+    # INTERACTIVE PLOTLY
+    # =========================
+
+    if html_files:
+
+        st.subheader("Interactive Visualizations")
+
+        for html_path in html_files:
+
+            with st.container(border=True):
+
+                st.markdown(
+                    f"### {html_path.stem.replace('_', ' ').title()}"
+                )
+
+                html_content = html_path.read_text(
+                    encoding="utf-8"
+                )
+
+                components.html(
+                    html_content,
+                    height=800,
+                    scrolling=True
+                )
 
 else:
     st.warning("No plots found for this brand.")
-
-st.divider()
 
 # =========================
 # CHATBOT

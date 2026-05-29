@@ -6,3 +6,4 @@ __pycache__/
 ~$*
 data/
 youtube_api
+!demobase/youtube_demo.db
