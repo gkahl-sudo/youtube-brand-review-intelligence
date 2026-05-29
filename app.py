@@ -10,11 +10,11 @@ from src.rag import ask_rag
 # =========================
 
 st.set_page_config(
-    page_title="AI Brand / Customer Review Insight Platform",
+    page_title="AI Brand / Customer Intelligence Platform (YouTube)",
     layout="wide"
 )
 
-st.title("AI Brand / Customer Review Insight Platform")
+st.title("AI Brand / Customer Intelligence Platform (YouTube)")
 
 # =========================
 # BRAND MAPPING
@@ -111,58 +111,63 @@ if plots_path.exists():
     # INTERACTIVE PLOTLY
     # =========================
 
-    if html_files:
+if html_files:
 
-        st.subheader("Comment Visualizations (Interactive)")
+    st.subheader("Visualizations (Interactive)")
 
-        # =========================
-        # MANUAL DISPLAY ORDER
-        # =========================
+    # =========================
+    # MANUAL DISPLAY ORDER
+    # =========================
 
-        preferred_order = [
-            "semantic_map",
-            "semantic_clusters"
-        ]
+    preferred_order = [
+        "car_dts_quadrant_map",
+        "semantic_map",
+        "semantic_clusters"
+    ]
 
-        def sort_key(path):
+    def sort_key(path):
 
-            stem = path.stem.lower()
+        stem = path.stem.lower()
 
-            if stem in preferred_order:
-                return preferred_order.index(stem)
+        if stem in preferred_order:
+            return preferred_order.index(stem)
 
-            return len(preferred_order)
+        return len(preferred_order)
 
-        html_files = sorted(
-            html_files,
-            key=sort_key
-        )
+    html_files = sorted(
+        html_files,
+        key=sort_key
+    )
 
-        # =========================
-        # TWO-COLUMN LAYOUT
-        # =========================
+    # =========================
+    # THREE-COLUMN LAYOUT
+    # =========================
 
-        cols = st.columns(2)
+    cols = st.columns(3)
 
-        for idx, html_path in enumerate(html_files):
+    for idx, html_path in enumerate(html_files):
 
-            with cols[idx % 2]:
+        with cols[idx % 3]:
 
-                with st.container(border=True):
+            with st.container(border=True):
 
-                    st.markdown(
-                        f"### {html_path.stem.replace('_', ' ').title()}"
-                    )
+                title = (
+                    html_path.stem
+                    .replace("_", " ")
+                    .title()
+                )
 
-                    html_content = html_path.read_text(
-                        encoding="utf-8"
-                    )
+                st.markdown(f"### {title}")
 
-                    components.html(
-                        html_content,
-                        height=700,
-                        scrolling=True
-                    )
+                html_content = html_path.read_text(
+                    encoding="utf-8"
+                )
+
+                components.html(
+                    html_content,
+                    height=650,
+                    scrolling=True
+                )
 
 else:
     st.warning("No plots found for this brand.")
