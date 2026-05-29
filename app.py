@@ -86,7 +86,7 @@ if plots_path.exists():
 
     if image_files:
 
-        st.subheader("Static Visualizations")
+        st.subheader("Video Stats & KPIs (static)")
 
         cols = st.columns(2)
 
@@ -113,25 +113,56 @@ if plots_path.exists():
 
     if html_files:
 
-        st.subheader("Interactive Visualizations")
+        st.subheader("Comment Visualizations (interactive)")
 
-        for html_path in html_files:
+        # =========================
+        # MANUAL DISPLAY ORDER
+        # =========================
 
-            with st.container(border=True):
+        preferred_order = [
+            "semantic_map",
+            "semantic_clusters"
+        ]
 
-                st.markdown(
-                    f"### {html_path.stem.replace('_', ' ').title()}"
-                )
+        def sort_key(path):
 
-                html_content = html_path.read_text(
-                    encoding="utf-8"
-                )
+            stem = path.stem.lower()
 
-                components.html(
-                    html_content,
-                    height=800,
-                    scrolling=True
-                )
+            if stem in preferred_order:
+                return preferred_order.index(stem)
+
+            return len(preferred_order)
+
+        html_files = sorted(
+            html_files,
+            key=sort_key
+        )
+
+        # =========================
+        # TWO-COLUMN LAYOUT
+        # =========================
+
+        cols = st.columns(2)
+
+        for idx, html_path in enumerate(html_files):
+
+            with cols[idx % 2]:
+
+                with st.container(border=True):
+
+                    st.markdown(
+                        f"### {html_path.stem.replace('_', ' ').title()}"
+                    )
+
+                    html_content = html_path.read_text(
+                        encoding="utf-8"
+                    )
+
+                    components.html(
+                        html_content,
+                        height=700,
+                        scrolling=True
+                    )
 
 else:
     st.warning("No plots found for this brand.")
