@@ -172,6 +172,113 @@ if html_files:
 else:
     st.warning("No plots found for this brand.")
 
+
+# =========================
+
+# ANALYTICS EXPLORER
+
+# =========================
+
+from src.analytics import (
+generate_sql,
+execute_sql
+)
+
+st.divider()
+
+st.header("Analytics Explorer")
+
+suggested_analytics = [
+"Top customer complaints",
+"Most negative comments",
+"Most positive comments",
+"Sentiment distribution",
+"Compare sentiment by video type",
+"Most common discussion topics",
+"Comments mentioning delivery",
+"Comments mentioning price"
+]
+
+selected_template = st.selectbox(
+"Suggested analytics requests",
+["Custom request"] + suggested_analytics
+)
+
+default_request = (
+selected_template
+if selected_template != "Custom request"
+else ""
+)
+
+analytics_request = st.text_area(
+"Describe the analysis you want",
+value=default_request,
+height=100
+)
+
+if st.button("Run Analytics"):
+
+if analytics_request.strip():
+
+    with st.spinner("Generating analysis query..."):
+
+        try:
+
+            sql = generate_sql(
+                user_request=analytics_request,
+                brand_name=selected_brand,
+                query_slug=query_slug
+            )
+
+            df = execute_sql(sql)
+
+            st.subheader("Results")
+
+            st.dataframe(
+                df,
+                use_container_width=True
+            )
+
+            # =========================
+            # AUTO VISUALIZATION
+            # =========================
+
+            numeric_cols = df.select_dtypes(
+                include=["number"]
+            ).columns
+
+            if (
+                len(df.columns) == 2
+                and len(numeric_cols) == 1
+            ):
+
+                st.subheader("Visualization")
+
+                chart_df = df.set_index(
+                    df.columns[0]
+                )
+
+                st.bar_chart(chart_df)
+
+            # =========================
+            # SQL TRANSPARENCY
+            # =========================
+
+            with st.expander(
+                "Generated SQL"
+            ):
+                st.code(
+                    sql,
+                    language="sql"
+                )
+
+        except Exception as e:
+
+            st.error(
+                f"Analytics query failed: {e}"
+            )
+
+
 # =========================
 # CHATBOT
 # =========================
