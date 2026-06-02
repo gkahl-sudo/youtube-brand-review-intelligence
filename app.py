@@ -218,65 +218,65 @@ height=100
 
 if st.button("Run Analytics"):
 
-if analytics_request.strip():
+    if analytics_request.strip():
 
-    with st.spinner("Generating analysis query..."):
+        with st.spinner("Generating analysis query..."):
 
-        try:
+            try:
 
-            sql = generate_sql(
-                user_request=analytics_request,
-                brand_name=selected_brand,
-                query_slug=query_slug
-            )
-
-            df = execute_sql(sql)
-
-            st.subheader("Results")
-
-            st.dataframe(
-                df,
-                use_container_width=True
-            )
-
-            # =========================
-            # AUTO VISUALIZATION
-            # =========================
-
-            numeric_cols = df.select_dtypes(
-                include=["number"]
-            ).columns
-
-            if (
-                len(df.columns) == 2
-                and len(numeric_cols) == 1
-            ):
-
-                st.subheader("Visualization")
-
-                chart_df = df.set_index(
-                    df.columns[0]
+                sql = generate_sql(
+                    user_request=analytics_request,
+                    brand_name=selected_brand,
+                    query_slug=query_slug
                 )
 
-                st.bar_chart(chart_df)
+                df = execute_sql(sql)
 
-            # =========================
-            # SQL TRANSPARENCY
-            # =========================
+                st.subheader("Results")
 
-            with st.expander(
-                "Generated SQL"
-            ):
-                st.code(
-                    sql,
-                    language="sql"
+                st.dataframe(
+                    df,
+                    use_container_width=True
                 )
 
-        except Exception as e:
+                # =========================
+                # AUTO VISUALIZATION
+                # =========================
 
-            st.error(
-                f"Analytics query failed: {e}"
-            )
+                numeric_cols = df.select_dtypes(
+                    include=["number"]
+                ).columns
+
+                if (
+                    len(df.columns) == 2
+                    and len(numeric_cols) == 1
+                ):
+
+                    st.subheader("Visualization")
+
+                    chart_df = df.set_index(
+                        df.columns[0]
+                    )
+
+                    st.bar_chart(chart_df)
+
+                # =========================
+                # SQL TRANSPARENCY
+                # =========================
+
+                with st.expander(
+                    "Generated SQL"
+                ):
+                    st.code(
+                        sql,
+                        language="sql"
+                    )
+
+            except Exception as e:
+
+                st.error(
+                    f"Analytics query failed: {e}"
+                )
 
 
 # =========================
