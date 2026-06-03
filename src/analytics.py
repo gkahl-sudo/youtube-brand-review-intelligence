@@ -77,14 +77,13 @@ query_slug: str
 
 def execute_sql(sql: str):
 
+    conn = get_connection()
 
-conn = get_connection()
+    try:
+        return pd.read_sql_query(
+            sql,
+            conn
+        )
 
-try:
-    return pd.read_sql_query(
-        sql,
-        conn
-    )
-
-finally:
-    conn.close()
+    finally:
+        conn.close()

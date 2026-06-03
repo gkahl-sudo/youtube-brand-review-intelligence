@@ -1,9 +1,11 @@
 import streamlit as st
 import streamlit.components.v1 as components
 from pathlib import Path
-
 from src.rag import ask_rag
-
+from src.analytics import (
+    generate_sql,
+    execute_sql
+)
 
 # =========================
 # PAGE CONFIG
@@ -67,6 +69,9 @@ st.header("Analytics Dashboard")
 PROJECT_ROOT = Path(__file__).resolve().parent
 
 plots_path = PROJECT_ROOT / "plots" / selected_brand
+
+html_files = []
+image_files = []
 
 if plots_path.exists():
 
@@ -179,41 +184,36 @@ else:
 
 # =========================
 
-from src.analytics import (
-generate_sql,
-execute_sql
-)
-
 st.divider()
 
 st.header("Analytics Explorer")
 
 suggested_analytics = [
-"Top customer complaints",
-"Most negative comments",
-"Most positive comments",
-"Sentiment distribution",
-"Compare sentiment by video type",
-"Most common discussion topics",
-"Comments mentioning delivery",
-"Comments mentioning price"
+    "Top customer complaints",
+    "Most negative comments",
+    "Most positive comments",
+    "Sentiment distribution",
+    "Compare sentiment by video type",
+    "Most common discussion topics",
+    "Comments mentioning delivery",
+    "Comments mentioning price"
 ]
 
 selected_template = st.selectbox(
-"Suggested analytics requests",
-["Custom request"] + suggested_analytics
+    "Suggested analytics requests",
+    ["Custom request"] + suggested_analytics
 )
 
 default_request = (
-selected_template
-if selected_template != "Custom request"
-else ""
+    selected_template
+    if selected_template != "Custom request"
+    else ""
 )
 
 analytics_request = st.text_area(
-"Describe the analysis you want",
-value=default_request,
-height=100
+    "Describe the analysis you want",
+    value=default_request,
+    height=100
 )
 
 if st.button("Run Analytics"):
