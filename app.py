@@ -112,59 +112,55 @@ if plots_path.exists():
                         .title()
                     )
 
-    # =========================
-    # INTERACTIVE PLOTLY
-    # =========================
+# =========================
+# INTERACTIVE PLOTLY
+# =========================
 
 if html_files:
 
     st.subheader("Visualizations (Interactive)")
 
-    # =========================
-    # MANUAL DISPLAY ORDER
-    # =========================
+    # -------------------------
+    # Locate expected plots
+    # -------------------------
 
-    preferred_order = [
-        "car_dts_quadrant_map",
-        "semantic_map",
-        "semantic_clusters"
-    ]
+    semantic_map = None
+    semantic_clusters = None
+    dar_cts_map = None
+    remaining_plots = []
 
-    def sort_key(path):
+    for html_path in html_files:
 
-        stem = path.stem.lower()
+        stem = html_path.stem.lower()
 
-        if stem in preferred_order:
-            return preferred_order.index(stem)
+        if stem == "semantic_map":
+            semantic_map = html_path
 
-        return len(preferred_order)
+        elif stem == "semantic_clusters":
+            semantic_clusters = html_path
 
-    html_files = sorted(
-        html_files,
-        key=sort_key
-    )
+        elif stem == "dar_cts_quadrant_map":
+            dar_cts_map = html_path
 
-    # =========================
-    # THREE-COLUMN LAYOUT
-    # =========================
+        else:
+            remaining_plots.append(html_path)
 
-    cols = st.columns(3)
+    # -------------------------
+    # ROW 1
+    # Semantic visualizations
+    # -------------------------
 
-    for idx, html_path in enumerate(html_files):
+    col1, col2 = st.columns(2)
 
-        with cols[idx % 3]:
+    if semantic_map:
+
+        with col1:
 
             with st.container(border=True):
 
-                title = (
-                    html_path.stem
-                    .replace("_", " ")
-                    .title()
-                )
+                st.markdown("### Semantic Map")
 
-                st.markdown(f"### {title}")
-
-                html_content = html_path.read_text(
+                html_content = semantic_map.read_text(
                     encoding="utf-8"
                 )
 
@@ -174,9 +170,84 @@ if html_files:
                     scrolling=True
                 )
 
-else:
-    st.warning("No plots found for this brand.")
+    if semantic_clusters:
 
+        with col2:
+
+            with st.container(border=True):
+
+                st.markdown("### Semantic Clusters")
+
+                html_content = semantic_clusters.read_text(
+                    encoding="utf-8"
+                )
+
+                components.html(
+                    html_content,
+                    height=650,
+                    scrolling=True
+                )
+
+    # -------------------------
+    # ROW 2
+    # DAR CTS Quadrant Map
+    # -------------------------
+
+    if dar_cts_map:
+
+        st.markdown("### DAR CTS Quadrant Map")
+
+        with st.container(border=True):
+
+            html_content = dar_cts_map.read_text(
+                encoding="utf-8"
+            )
+
+            components.html(
+                html_content,
+                height=700,
+                scrolling=True
+            )
+
+    # -------------------------
+    # Any additional plots
+    # -------------------------
+
+    if remaining_plots:
+
+        st.subheader("Additional Visualizations")
+
+        cols = st.columns(3)
+
+        for idx, html_path in enumerate(remaining_plots):
+
+            with cols[idx % 3]:
+
+                with st.container(border=True):
+
+                    title = (
+                        html_path.stem
+                        .replace("_", " ")
+                        .title()
+                    )
+
+                    st.markdown(f"### {title}")
+
+                    html_content = html_path.read_text(
+                        encoding="utf-8"
+                    )
+
+                    components.html(
+                        html_content,
+                        height=650,
+                        scrolling=True
+                    )
+
+else:
+
+    st.warning(
+        "No plots found for this brand."
+    )
 
 # =========================
 
