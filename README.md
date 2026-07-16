@@ -22,6 +22,9 @@ The project combines:
 * Retrieval-Augmented Generation (RAG)
 * Interactive Dashboarding
 
+A Demo Version can be found on Streamlit:
+https://youtube-brand-review-intelligence-v5czl6rnbmborywaqvpoyg.streamlit.app/
+
 ---
 
 # Project Architecture
